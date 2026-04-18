@@ -82,6 +82,48 @@
       text-decoration: underline;
     }
 
+    .dedication-button {
+      margin-left: 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--accent);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 900;
+      min-height: 44px;
+      padding: 4px 8px;
+    }
+
+    .dedication-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      place-items: center;
+      padding: 20px;
+      background: rgba(23, 33, 43, 0.48);
+    }
+
+    .dedication-modal.open {
+      display: grid;
+    }
+
+    .dedication-card {
+      width: min(420px, 100%);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      text-align: center;
+    }
+
+    .dedication-card p {
+      margin: 10px 0 0;
+      color: var(--muted);
+    }
+
     .site-nav {
       display: flex;
       align-items: center;
@@ -118,8 +160,11 @@
     .nav-links a {
       border-radius: 8px;
       color: var(--muted);
+      display: inline-flex;
+      align-items: center;
       font-size: 0.94rem;
       font-weight: 800;
+      min-height: 44px;
       padding: 8px 10px;
       text-decoration: none;
     }
@@ -166,6 +211,7 @@
       font: inherit;
       font-size: 0.9rem;
       font-weight: 800;
+      min-height: 44px;
       padding: 9px 12px;
     }
 
@@ -250,6 +296,10 @@
       cursor: pointer;
     }
 
+    input[type="range"] {
+      min-height: 34px;
+    }
+
     select {
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -287,6 +337,8 @@
     .fretboard-wrap {
       overflow-x: auto;
       padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
     }
 
     .fretboard {
@@ -435,6 +487,7 @@
       cursor: pointer;
       font: inherit;
       font-weight: 900;
+      min-height: 48px;
       padding: 12px 10px;
     }
 
@@ -520,6 +573,27 @@
       color: var(--ember);
     }
 
+    .streak-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .streak-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 10px;
+    }
+
+    .streak-value {
+      margin-top: 4px;
+      color: var(--ember);
+      font-size: 1.8rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
     .toggle-row {
       display: flex;
       align-items: center;
@@ -549,6 +623,19 @@
       color: var(--text);
     }
 
+    .step-label {
+      display: grid;
+      gap: 2px;
+    }
+
+    .direction-cue {
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
     .small-copy {
       margin: 14px 0 0;
       color: var(--muted);
@@ -560,6 +647,20 @@
       .site-nav {
         align-items: flex-start;
         flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-links {
+        width: 100%;
+      }
+
+      .nav-links a {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .theme-button {
+        width: 100%;
       }
 
       .layout {
@@ -568,6 +669,44 @@
 
       .control-grid {
         grid-template-columns: 1fr;
+      }
+
+      .panel,
+      .practice-card {
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      main {
+        width: min(100% - 16px, 1120px);
+      }
+
+      .fretboard {
+        grid-template-columns: 46px repeat(13, 48px);
+        min-width: 670px;
+      }
+
+      .string-label,
+      .fret-cell {
+        min-height: 52px;
+      }
+
+      .fret-number {
+        min-height: 30px;
+      }
+
+      .checker-readout,
+      .streak-row {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+
+      .site-footer {
+        width: min(100% - 16px, 1120px);
       }
     }
   </style>
@@ -653,6 +792,22 @@
             <input id="autoAdvance" type="checkbox" checked>
             Auto-advance after a clean hit
           </label>
+          <label for="checkerMode">Mic Mode
+            <select id="checkerMode">
+              <option value="check">Check only</option>
+              <option value="callResponse">Call and response</option>
+            </select>
+          </label>
+          <div class="streak-row">
+            <div class="streak-box">
+              <div class="checker-label">Spark Streak</div>
+              <div id="streakValue" class="streak-value">0</div>
+            </div>
+            <div class="streak-box">
+              <div class="checker-label">Best</div>
+              <div id="bestStreakValue" class="streak-value">0</div>
+            </div>
+          </div>
         </div>
 
         <div id="practiceList" class="practice-list" aria-label="Practice sequence"></div>
@@ -662,7 +817,16 @@
 
   <footer class="site-footer">
     Built by <a href="https://kiannang.github.io/" target="_blank" rel="noopener noreferrer">Kianna Ng</a>
+    <button id="dedicationButton" class="dedication-button" type="button" aria-label="Open dedication">spark</button>
   </footer>
+
+  <div id="dedicationModal" class="dedication-modal" role="dialog" aria-modal="true" aria-labelledby="dedicationTitle">
+    <div class="dedication-card">
+      <h2 id="dedicationTitle">A tiny secret chord</h2>
+      <p>For Finn, from his Fire Princess. Stay brave, stay warm, and keep finding the next note.</p>
+      <button id="dedicationClose" type="button">Close</button>
+    </div>
+  </div>
 
   <script>
     const THEME_STORAGE_KEY = "guitar-tuner-theme";
@@ -699,6 +863,8 @@
     let isCheckingPitch = false;
     let correctFrameCount = 0;
     let canAutoAdvance = true;
+    let hitStreak = 0;
+    let bestStreak = 0;
 
     const keySelect = document.getElementById("keySelect");
     const scaleSelect = document.getElementById("scaleSelect");
@@ -719,6 +885,12 @@
     const heardNote = document.getElementById("heardNote");
     const checkerStatus = document.getElementById("checkerStatus");
     const autoAdvance = document.getElementById("autoAdvance");
+    const checkerMode = document.getElementById("checkerMode");
+    const streakValue = document.getElementById("streakValue");
+    const bestStreakValue = document.getElementById("bestStreakValue");
+    const dedicationButton = document.getElementById("dedicationButton");
+    const dedicationModal = document.getElementById("dedicationModal");
+    const dedicationClose = document.getElementById("dedicationClose");
 
     function noteNameFromMidi(midi) {
       return NOTES[((midi % 12) + 12) % 12];
@@ -732,6 +904,16 @@
     function setCheckerStatus(message, state) {
       checkerStatus.textContent = message;
       checkerStatus.className = "checker-status" + (state ? " " + state : "");
+    }
+
+    function updateStreakDisplay() {
+      streakValue.textContent = String(hitStreak);
+      bestStreakValue.textContent = String(bestStreak);
+    }
+
+    function resetStreak() {
+      hitStreak = 0;
+      updateStreakDisplay();
     }
 
     function selectedScaleNotes() {
@@ -756,6 +938,17 @@
       }
 
       return sequence;
+    }
+
+    function directionCue(index, sequence) {
+      if (sequence.length <= 1) return "hold";
+      if (patternSelect.value === "down") return "down";
+      if (patternSelect.value === "up") return index === sequence.length - 1 ? "resolve" : "up";
+
+      const topIndex = selectedScaleNotes().length;
+      if (index < topIndex) return "up";
+      if (index === topIndex) return "turn";
+      return "down";
     }
 
     function populateControls() {
@@ -828,7 +1021,9 @@
         if (index === currentStep) {
           item.classList.add("active");
         }
-        item.innerHTML = '<span>Step ' + (index + 1) + '</span><strong>' + note + '</strong>';
+        item.innerHTML =
+          '<span class="step-label"><span>Step ' + (index + 1) + '</span><span class="direction-cue">' +
+          directionCue(index, sequence) + '</span></span><strong>' + note + '</strong>';
         item.addEventListener("click", function () {
           currentStep = index;
           render();
@@ -974,16 +1169,25 @@
           correctFrameCount += 1;
           setCheckerStatus("Clean hit. Keep it steady.", "correct");
 
-          if (autoAdvance.checked && canAutoAdvance && correctFrameCount >= 8) {
-            stepForward();
+          if (canAutoAdvance && correctFrameCount >= 8 && (autoAdvance.checked || checkerMode.value === "callResponse")) {
+            registerCleanHit();
           }
         } else {
           correctFrameCount = 0;
+          resetStreak();
           setCheckerStatus("Heard " + heard + ". Aim for " + target + ".", "miss");
         }
       }
 
       listenFrameId = window.requestAnimationFrame(checkPitchLoop);
+    }
+
+    function registerCleanHit() {
+      hitStreak += 1;
+      bestStreak = Math.max(bestStreak, hitStreak);
+      updateStreakDisplay();
+      setCheckerStatus("Spark streak: " + hitStreak + ".", "correct");
+      stepForward();
     }
 
     async function startPitchCheck() {
@@ -1069,18 +1273,21 @@
     keySelect.addEventListener("change", function () {
       currentStep = 0;
       correctFrameCount = 0;
+      resetStreak();
       render();
     });
 
     scaleSelect.addEventListener("change", function () {
       currentStep = 0;
       correctFrameCount = 0;
+      resetStreak();
       render();
     });
 
     patternSelect.addEventListener("change", function () {
       currentStep = 0;
       correctFrameCount = 0;
+      resetStreak();
       render();
     });
 
@@ -1103,6 +1310,17 @@
       }
     });
 
+    checkerMode.addEventListener("change", function () {
+      correctFrameCount = 0;
+      resetStreak();
+      if (checkerMode.value === "callResponse") {
+        autoAdvance.checked = true;
+        setCheckerStatus("Call and response waits for each clean note.", "");
+      } else {
+        setCheckerStatus(isCheckingPitch ? "Listening for the target note." : "Mic checker is off.", "");
+      }
+    });
+
     tempoSlider.addEventListener("input", function () {
       tempoValue.textContent = tempoSlider.value + " BPM";
       if (timerId !== null) startPractice();
@@ -1114,6 +1332,20 @@
       localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
     });
 
+    dedicationButton.addEventListener("click", function () {
+      dedicationModal.classList.add("open");
+    });
+
+    dedicationClose.addEventListener("click", function () {
+      dedicationModal.classList.remove("open");
+    });
+
+    dedicationModal.addEventListener("click", function (event) {
+      if (event.target === dedicationModal) {
+        dedicationModal.classList.remove("open");
+      }
+    });
+
     window.addEventListener("beforeunload", function () {
       stopPitchCheck();
     });
@@ -1121,6 +1353,7 @@
     populateControls();
     buildFretboard();
     applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "light");
+    updateStreakDisplay();
     render();
   </script>
 </body>

@@ -94,6 +94,48 @@
       text-decoration: underline;
     }
 
+    .dedication-button {
+      margin-left: 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--accent);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 900;
+      min-height: 44px;
+      padding: 4px 8px;
+    }
+
+    .dedication-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      place-items: center;
+      padding: 20px;
+      background: rgba(23, 33, 43, 0.48);
+    }
+
+    .dedication-modal.open {
+      display: grid;
+    }
+
+    .dedication-card {
+      width: min(420px, 100%);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      text-align: center;
+    }
+
+    .dedication-card p {
+      margin: 10px 0 0;
+      color: var(--muted);
+    }
+
     .site-nav {
       display: flex;
       align-items: center;
@@ -127,8 +169,11 @@
     .nav-links a {
       border-radius: 8px;
       color: var(--muted);
+      display: inline-flex;
+      align-items: center;
       font-size: 0.94rem;
       font-weight: 800;
+      min-height: 44px;
       padding: 8px 10px;
       text-decoration: none;
     }
@@ -438,6 +483,7 @@
       font: inherit;
       font-size: 1.08rem;
       font-weight: 800;
+      min-height: 52px;
       padding: 16px 18px;
       transition: transform 120ms ease, background-color 120ms ease;
     }
@@ -468,6 +514,7 @@
       font-size: 0.9rem;
       font-weight: 800;
       min-width: 126px;
+      min-height: 44px;
       padding: 9px 12px;
       transition: background-color 120ms ease, border-color 120ms ease;
     }
@@ -527,6 +574,7 @@
       width: 100%;
       accent-color: var(--accent);
       cursor: pointer;
+      min-height: 34px;
     }
 
     input[type="checkbox"] {
@@ -596,6 +644,16 @@
       .site-nav {
         align-items: flex-start;
         flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-links {
+        width: 100%;
+      }
+
+      .nav-links a {
+        flex: 1;
+        justify-content: center;
       }
 
       .header-actions {
@@ -617,6 +675,41 @@
 
       .readout {
         min-height: auto;
+      }
+
+      .panel,
+      .control-panel,
+      .help {
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      main {
+        width: min(100% - 16px, 620px);
+      }
+
+      .topbar {
+        margin-bottom: 14px;
+      }
+
+      .readout {
+        gap: 18px;
+        padding: 18px 14px;
+      }
+
+      .meter {
+        height: 38px;
+      }
+
+      .label-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .site-footer {
+        width: min(100% - 16px, 620px);
       }
     }
 
@@ -718,7 +811,16 @@
 
   <footer class="site-footer">
     Built by <a href="https://kiannang.github.io/" target="_blank" rel="noopener noreferrer">Kianna Ng</a>
+    <button id="dedicationButton" class="dedication-button" type="button" aria-label="Open dedication">spark</button>
   </footer>
+
+  <div id="dedicationModal" class="dedication-modal" role="dialog" aria-modal="true" aria-labelledby="dedicationTitle">
+    <div class="dedication-card">
+      <h2 id="dedicationTitle">A tiny secret chord</h2>
+      <p>For Finn, from his Fire Princess. Stay brave, stay warm, and keep finding the next note.</p>
+      <button id="dedicationClose" type="button">Close</button>
+    </div>
+  </div>
 
   <script>
     const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -756,6 +858,9 @@
     const gainValue = document.getElementById("gainValue");
     const noiseGuard = document.getElementById("noiseGuard");
     const status = document.getElementById("status");
+    const dedicationButton = document.getElementById("dedicationButton");
+    const dedicationModal = document.getElementById("dedicationModal");
+    const dedicationClose = document.getElementById("dedicationClose");
 
     function midiToFrequency(midi) {
       return a4 * Math.pow(2, (midi - 69) / 12);
@@ -1052,6 +1157,20 @@
       const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
       applyTheme(nextTheme);
       localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    });
+
+    dedicationButton.addEventListener("click", function () {
+      dedicationModal.classList.add("open");
+    });
+
+    dedicationClose.addEventListener("click", function () {
+      dedicationModal.classList.remove("open");
+    });
+
+    dedicationModal.addEventListener("click", function (event) {
+      if (event.target === dedicationModal) {
+        dedicationModal.classList.remove("open");
+      }
     });
 
     a4Slider.addEventListener("input", function () {

@@ -11,6 +11,10 @@ cd YOUR-REPOSITORY
 
 Open `index.html` in a browser for local testing. Microphone access works best from `https://` or `localhost`; GitHub Pages serves the deployed site over HTTPS.
 
+## Phone Use
+
+Open the GitHub Pages URL on the phone and allow microphone access when prompted. The tuner and scale checker are designed for small screens, but microphone features require a secure page, so use the deployed `https://` Pages URL rather than an unsecure local file.
+
 ## Enable GitHub Pages
 
 1. Push this repository to GitHub.
