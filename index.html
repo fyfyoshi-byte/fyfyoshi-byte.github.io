@@ -377,6 +377,13 @@
       cursor: pointer;
     }
 
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
     .range-hints {
       display: flex;
       justify-content: space-between;
@@ -385,52 +392,25 @@
       font-size: 0.8rem;
     }
 
-    .strings {
+    .toggle-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .toggle-copy {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
+      gap: 4px;
     }
 
-    .string-card {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--panel);
-      padding: 12px;
-      min-height: 84px;
-      display: grid;
-      align-content: center;
-      transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
-    }
-
-    .string-card.active {
-      border-color: var(--accent);
-      background: linear-gradient(135deg, var(--ember-soft), var(--hero-soft));
-      transform: translateY(-1px);
-    }
-
-    .string-note {
-      font-size: 1.45rem;
-      font-weight: 850;
-      line-height: 1;
-    }
-
-    .string-card.active .string-note {
-      color: var(--accent);
-    }
-
-    .string-name {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 0.82rem;
-    }
-
-    .string-frequency {
-      margin-top: 4px;
+    .toggle-copy strong {
       color: var(--text);
-      font-size: 0.95rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
+      line-height: 1.2;
+    }
+
+    .toggle-copy span {
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
     .help {
@@ -475,11 +455,6 @@
       }
     }
 
-    @media (max-width: 430px) {
-      .strings {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 <body>
@@ -535,8 +510,13 @@
         </section>
 
         <section class="panel control-panel">
-          <div class="section-title">Standard Guitar Strings</div>
-          <div id="stringGrid" class="strings"></div>
+          <label class="toggle-row" for="noiseGuard">
+            <input id="noiseGuard" type="checkbox" checked>
+            <span class="toggle-copy">
+              <strong>Noise Guard</strong>
+              <span>Filters rumble and hiss before pitch detection only.</span>
+            </span>
+          </label>
         </section>
 
         <section class="panel help">
@@ -550,14 +530,6 @@
 
   <script>
     const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    const GUITAR_STRINGS = [
-      { note: "E2", name: "6th string", midi: 40 },
-      { note: "A2", name: "5th string", midi: 45 },
-      { note: "D3", name: "4th string", midi: 50 },
-      { note: "G3", name: "3rd string", midi: 55 },
-      { note: "B3", name: "2nd string", midi: 59 },
-      { note: "E4", name: "1st string", midi: 64 }
-    ];
 
     const ANALYSER_FFT_SIZE = 8192;
     const MIN_DETECT_FREQ = 50;
@@ -570,6 +542,8 @@
     let audioContext = null;
     let analyser = null;
     let microphoneSource = null;
+    let highPassFilter = null;
+    let lowPassFilter = null;
     let microphoneStream = null;
     let timeDomainBuffer = null;
     let animationId = null;
@@ -583,7 +557,7 @@
     const centsText = document.getElementById("centsText");
     const a4Slider = document.getElementById("a4Slider");
     const a4Value = document.getElementById("a4Value");
-    const stringGrid = document.getElementById("stringGrid");
+    const noiseGuard = document.getElementById("noiseGuard");
     const status = document.getElementById("status");
 
     function midiToFrequency(midi) {
@@ -600,10 +574,6 @@
       return NOTE_NAMES[noteIndex] + octave;
     }
 
-    function centsBetween(frequency, targetFrequency) {
-      return 1200 * Math.log2(frequency / targetFrequency);
-    }
-
     function tuningState(cents) {
       if (Math.abs(cents) <= 5) return "in-tune";
       return cents > 0 ? "sharp" : "flat";
@@ -614,51 +584,20 @@
       status.classList.toggle("error", Boolean(isError));
     }
 
-    function buildStringGrid() {
-      stringGrid.innerHTML = "";
+    function connectAnalysisGraph() {
+      if (!microphoneSource || !analyser) return;
 
-      GUITAR_STRINGS.forEach(function (string, index) {
-        const card = document.createElement("div");
-        card.className = "string-card";
-        card.id = "string-" + index;
-        card.innerHTML =
-          '<div class="string-note">' + string.note + '</div>' +
-          '<div class="string-name">' + string.name + '</div>' +
-          '<div id="string-frequency-' + index + '" class="string-frequency"></div>';
-        stringGrid.appendChild(card);
-      });
+      microphoneSource.disconnect();
+      if (highPassFilter) highPassFilter.disconnect();
+      if (lowPassFilter) lowPassFilter.disconnect();
 
-      updateStringFrequencies();
-    }
-
-    function updateStringFrequencies() {
-      GUITAR_STRINGS.forEach(function (string, index) {
-        const frequency = document.getElementById("string-frequency-" + index);
-        frequency.textContent = midiToFrequency(string.midi).toFixed(2) + " Hz";
-      });
-    }
-
-    function clearStringHighlight() {
-      GUITAR_STRINGS.forEach(function (_string, index) {
-        document.getElementById("string-" + index).classList.remove("active");
-      });
-    }
-
-    function highlightClosestString(frequency) {
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-
-      GUITAR_STRINGS.forEach(function (string, index) {
-        const distance = Math.abs(centsBetween(frequency, midiToFrequency(string.midi)));
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
-        }
-      });
-
-      GUITAR_STRINGS.forEach(function (_string, index) {
-        document.getElementById("string-" + index).classList.toggle("active", index === closestIndex);
-      });
+      if (noiseGuard.checked && highPassFilter && lowPassFilter) {
+        microphoneSource.connect(highPassFilter);
+        highPassFilter.connect(lowPassFilter);
+        lowPassFilter.connect(analyser);
+      } else {
+        microphoneSource.connect(analyser);
+      }
     }
 
     function resetReadout() {
@@ -670,14 +609,13 @@
       meterFill.className = "meter-fill";
       centsText.textContent = "--";
       centsText.className = "cents";
-      clearStringHighlight();
     }
 
     function renderPitch(frequency) {
       const midiFloat = frequencyToMidi(frequency);
       const nearestMidi = Math.round(midiFloat);
       const targetFrequency = midiToFrequency(nearestMidi);
-      const cents = centsBetween(frequency, targetFrequency);
+      const cents = 1200 * Math.log2(frequency / targetFrequency);
       const roundedCents = Math.round(cents);
       const state = tuningState(cents);
       const meterValue = Math.max(-50, Math.min(50, cents));
@@ -701,8 +639,6 @@
         centsText.textContent = (roundedCents > 0 ? "+" : "") + roundedCents + " cents (" + state + ")";
       }
       centsText.className = "cents " + state;
-
-      highlightClosestString(frequency);
     }
 
     function autocorrelate(buffer, sampleRate) {
@@ -819,8 +755,18 @@
         analyser.fftSize = ANALYSER_FFT_SIZE;
         analyser.smoothingTimeConstant = 0;
 
+        highPassFilter = audioContext.createBiquadFilter();
+        highPassFilter.type = "highpass";
+        highPassFilter.frequency.value = 65;
+        highPassFilter.Q.value = 0.7;
+
+        lowPassFilter = audioContext.createBiquadFilter();
+        lowPassFilter.type = "lowpass";
+        lowPassFilter.frequency.value = 1200;
+        lowPassFilter.Q.value = 0.7;
+
         microphoneSource = audioContext.createMediaStreamSource(microphoneStream);
-        microphoneSource.connect(analyser);
+        connectAnalysisGraph();
         timeDomainBuffer = new Float32Array(analyser.fftSize);
         frequencyHistory = [];
         isListening = true;
@@ -846,6 +792,16 @@
       if (microphoneSource) {
         microphoneSource.disconnect();
         microphoneSource = null;
+      }
+
+      if (highPassFilter) {
+        highPassFilter.disconnect();
+        highPassFilter = null;
+      }
+
+      if (lowPassFilter) {
+        lowPassFilter.disconnect();
+        lowPassFilter = null;
       }
 
       if (microphoneStream) {
@@ -880,10 +836,15 @@
     a4Slider.addEventListener("input", function () {
       a4 = Number(a4Slider.value);
       a4Value.textContent = a4.toFixed(1) + " Hz";
-      updateStringFrequencies();
     });
 
-    buildStringGrid();
+    noiseGuard.addEventListener("change", function () {
+      connectAnalysisGraph();
+      if (isListening) {
+        setStatus(noiseGuard.checked ? "Listening with Noise Guard on." : "Listening with raw microphone input.", false);
+      }
+    });
+
     resetReadout();
   </script>
 </body>
