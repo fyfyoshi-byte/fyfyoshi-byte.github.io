@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guitar Tuner</title>
+  <title>Freetuna</title>
   <style>
     :root {
       --bg: #f7fbff;
@@ -26,6 +26,29 @@
       --flat: #236bc8;
       --flat-soft: #e0edff;
       --shadow: 0 18px 45px rgba(23, 33, 43, 0.12);
+    }
+
+    body.dark-mode {
+      --bg: #171320;
+      --panel: #211a2c;
+      --panel-strong: #15111d;
+      --text: #fff8ef;
+      --muted: #cabed2;
+      --border: #3d304d;
+      --accent: #65d8c7;
+      --accent-soft: #203d3c;
+      --ember: #ff805d;
+      --ember-soft: #4a261f;
+      --hero: #83ddf4;
+      --hero-soft: #1e3d4a;
+      --pack: #a5d874;
+      --good: #76e29a;
+      --good-soft: #1f3c2a;
+      --sharp: #ff7878;
+      --sharp-soft: #4c2528;
+      --flat: #91bcff;
+      --flat-soft: #243653;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
     }
 
     * {
@@ -175,10 +198,30 @@
       text-align: right;
     }
 
+    .header-actions {
+      display: grid;
+      justify-items: end;
+      gap: 10px;
+    }
+
     .status.error {
       border-color: var(--sharp);
       color: var(--sharp);
       background: var(--sharp-soft);
+    }
+
+    body.dark-mode .status,
+    body.dark-mode .panel {
+      background: rgba(33, 26, 44, 0.9);
+    }
+
+    body.dark-mode .readout {
+      background:
+        radial-gradient(circle at 18% 14%, rgba(255, 128, 93, 0.18), transparent 32%),
+        radial-gradient(circle at 82% 12%, rgba(131, 221, 244, 0.14), transparent 34%),
+        linear-gradient(140deg, rgba(255, 128, 93, 0.1), transparent 34%),
+        linear-gradient(320deg, rgba(131, 221, 244, 0.12), transparent 42%),
+        rgba(33, 26, 44, 0.92);
     }
 
     .layout {
@@ -347,6 +390,51 @@
       background: linear-gradient(90deg, #17212b, #2c4659);
     }
 
+    .theme-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 800;
+      min-width: 126px;
+      padding: 9px 12px;
+      transition: background-color 120ms ease, border-color 120ms ease;
+    }
+
+    .theme-button::before {
+      content: "";
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #ffd76d;
+      box-shadow: 0 0 0 3px rgba(255, 215, 109, 0.2);
+    }
+
+    body.dark-mode .theme-button {
+      background: linear-gradient(135deg, rgba(255, 128, 93, 0.18), rgba(131, 221, 244, 0.16));
+      color: var(--text);
+    }
+
+    body.dark-mode .theme-button::before {
+      background: var(--panel);
+      box-shadow:
+        5px -2px 0 #fff0ba,
+        0 0 0 3px rgba(255, 240, 186, 0.16),
+        11px 6px 0 -6px #fff0ba;
+    }
+
+    .theme-button:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
     .label-row {
       display: flex;
       align-items: baseline;
@@ -441,8 +529,16 @@
         display: block;
       }
 
-      .status {
+      .header-actions {
+        justify-items: stretch;
         margin-top: 14px;
+      }
+
+      .theme-button {
+        width: 100%;
+      }
+
+      .status {
         text-align: left;
       }
 
@@ -462,7 +558,7 @@
     <div class="topbar">
       <div>
         <div class="title-row">
-          <h1>Guitar Tuner</h1>
+          <h1>Freetuna</h1>
           <span class="charm-pair" aria-label="A tiny flame and a tiny hero hood">
             <span class="flame-charm" aria-hidden="true"></span>
             <span class="hero-charm" aria-hidden="true"><span class="hero-face"></span></span>
@@ -470,7 +566,10 @@
         </div>
         <p class="tagline">For brave hearts, warm sparks, and strings that find their way home.</p>
       </div>
-      <div id="status" class="status" role="status" aria-live="polite">Press Start and allow microphone access.</div>
+      <div class="header-actions">
+        <button id="themeButton" class="theme-button" type="button" aria-pressed="false">Night Mode</button>
+        <div id="status" class="status" role="status" aria-live="polite">Press Start and allow microphone access.</div>
+      </div>
     </div>
 
     <div class="layout">
@@ -510,6 +609,18 @@
         </section>
 
         <section class="panel control-panel">
+          <div class="label-row">
+            <label for="gainSlider">Input Gain</label>
+            <span id="gainValue" class="a4-value">1.00x</span>
+          </div>
+          <input id="gainSlider" type="range" min="0.25" max="4" step="0.05" value="1">
+          <div class="range-hints" aria-hidden="true">
+            <span>less</span>
+            <span>more</span>
+          </div>
+        </section>
+
+        <section class="panel control-panel">
           <label class="toggle-row" for="noiseGuard">
             <input id="noiseGuard" type="checkbox" checked>
             <span class="toggle-copy">
@@ -542,6 +653,7 @@
     let audioContext = null;
     let analyser = null;
     let microphoneSource = null;
+    let inputGain = null;
     let highPassFilter = null;
     let lowPassFilter = null;
     let microphoneStream = null;
@@ -550,13 +662,17 @@
     let isListening = false;
     let frequencyHistory = [];
 
+    const THEME_STORAGE_KEY = "guitar-tuner-theme";
     const toggleButton = document.getElementById("toggleButton");
+    const themeButton = document.getElementById("themeButton");
     const noteName = document.getElementById("noteName");
     const frequencyLine = document.getElementById("frequencyLine");
     const meterFill = document.getElementById("meterFill");
     const centsText = document.getElementById("centsText");
     const a4Slider = document.getElementById("a4Slider");
     const a4Value = document.getElementById("a4Value");
+    const gainSlider = document.getElementById("gainSlider");
+    const gainValue = document.getElementById("gainValue");
     const noiseGuard = document.getElementById("noiseGuard");
     const status = document.getElementById("status");
 
@@ -584,19 +700,29 @@
       status.classList.toggle("error", Boolean(isError));
     }
 
+    function applyTheme(theme) {
+      const useDarkMode = theme === "dark";
+      document.body.classList.toggle("dark-mode", useDarkMode);
+      themeButton.textContent = useDarkMode ? "Morning Mode" : "Night Mode";
+      themeButton.setAttribute("aria-pressed", String(useDarkMode));
+    }
+
     function connectAnalysisGraph() {
-      if (!microphoneSource || !analyser) return;
+      if (!microphoneSource || !inputGain || !analyser) return;
 
       microphoneSource.disconnect();
+      inputGain.disconnect();
       if (highPassFilter) highPassFilter.disconnect();
       if (lowPassFilter) lowPassFilter.disconnect();
 
+      microphoneSource.connect(inputGain);
+
       if (noiseGuard.checked && highPassFilter && lowPassFilter) {
-        microphoneSource.connect(highPassFilter);
+        inputGain.connect(highPassFilter);
         highPassFilter.connect(lowPassFilter);
         lowPassFilter.connect(analyser);
       } else {
-        microphoneSource.connect(analyser);
+        inputGain.connect(analyser);
       }
     }
 
@@ -755,6 +881,9 @@
         analyser.fftSize = ANALYSER_FFT_SIZE;
         analyser.smoothingTimeConstant = 0;
 
+        inputGain = audioContext.createGain();
+        inputGain.gain.value = Number(gainSlider.value);
+
         highPassFilter = audioContext.createBiquadFilter();
         highPassFilter.type = "highpass";
         highPassFilter.frequency.value = 65;
@@ -792,6 +921,11 @@
       if (microphoneSource) {
         microphoneSource.disconnect();
         microphoneSource = null;
+      }
+
+      if (inputGain) {
+        inputGain.disconnect();
+        inputGain = null;
       }
 
       if (highPassFilter) {
@@ -833,9 +967,23 @@
       }
     });
 
+    themeButton.addEventListener("click", function () {
+      const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+      applyTheme(nextTheme);
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    });
+
     a4Slider.addEventListener("input", function () {
       a4 = Number(a4Slider.value);
       a4Value.textContent = a4.toFixed(1) + " Hz";
+    });
+
+    gainSlider.addEventListener("input", function () {
+      const gain = Number(gainSlider.value);
+      gainValue.textContent = gain.toFixed(2) + "x";
+      if (inputGain) {
+        inputGain.gain.setTargetAtTime(gain, audioContext.currentTime, 0.01);
+      }
     });
 
     noiseGuard.addEventListener("change", function () {
@@ -845,6 +993,7 @@
       }
     });
 
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "light");
     resetReadout();
   </script>
 </body>
