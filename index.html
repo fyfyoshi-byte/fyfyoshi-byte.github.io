@@ -75,6 +75,70 @@
       padding: 28px 0 36px;
     }
 
+    .site-footer {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 0 0 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    .site-footer a {
+      color: var(--accent);
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+    }
+
+    body.dark-mode .site-nav {
+      background: rgba(33, 26, 44, 0.9);
+    }
+
+    .nav-brand {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a {
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      font-weight: 800;
+      padding: 8px 10px;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
     .topbar {
       display: flex;
       align-items: end;
@@ -529,6 +593,11 @@
         display: block;
       }
 
+      .site-nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
       .header-actions {
         justify-items: stretch;
         margin-top: 14px;
@@ -555,6 +624,14 @@
 </head>
 <body>
   <main>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="nav-brand" href="index.html">Freetuna</a>
+      <div class="nav-links">
+        <a href="index.html" aria-current="page">Tuner</a>
+        <a href="scales.html">Scales</a>
+      </div>
+    </nav>
+
     <div class="topbar">
       <div>
         <div class="title-row">
@@ -638,6 +715,10 @@
       </aside>
     </div>
   </main>
+
+  <footer class="site-footer">
+    Built by <a href="https://kiannang.github.io/" target="_blank" rel="noopener noreferrer">Kianna Ng</a>
+  </footer>
 
   <script>
     const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];

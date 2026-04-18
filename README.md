@@ -1,6 +1,6 @@
 # Guitar Tuner
 
-A single-page guitar tuner web app for GitHub Pages. The app lives entirely in `index.html` with inline CSS and JavaScript, no build tools, no dependencies, and no CDN imports.
+A small guitar practice website for GitHub Pages. The tuner lives in `index.html`, with an additional `scales.html` page for scale practice. Styles and scripts are inline, with no build tools, no dependencies, and no CDN imports.
 
 ## Clone the Repository
 

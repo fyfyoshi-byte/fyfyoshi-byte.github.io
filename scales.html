@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freetuna Scales</title>
+  <style>
+    :root {
+      --bg: #f7fbff;
+      --panel: #ffffff;
+      --panel-strong: #eaf3f9;
+      --text: #17212b;
+      --muted: #657282;
+      --border: #cfdae5;
+      --accent: #009b8e;
+      --accent-soft: #d9f4f0;
+      --ember: #ff623d;
+      --ember-soft: #ffe2d6;
+      --hero: #4fc3df;
+      --hero-soft: #dff5fb;
+      --pack: #79b84a;
+      --shadow: 0 18px 45px rgba(23, 33, 43, 0.12);
+    }
+
+    body.dark-mode {
+      --bg: #171320;
+      --panel: #211a2c;
+      --panel-strong: #15111d;
+      --text: #fff8ef;
+      --muted: #cabed2;
+      --border: #3d304d;
+      --accent: #65d8c7;
+      --accent-soft: #203d3c;
+      --ember: #ff805d;
+      --ember-soft: #4a261f;
+      --hero: #83ddf4;
+      --hero-soft: #1e3d4a;
+      --pack: #a5d874;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(255, 98, 61, 0.2), transparent 28%),
+        radial-gradient(circle at 84% 8%, rgba(79, 195, 223, 0.18), transparent 30%),
+        linear-gradient(135deg, rgba(0, 155, 142, 0.08), transparent 42%),
+        linear-gradient(315deg, rgba(121, 184, 74, 0.1), transparent 38%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .site-footer {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 0 0 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    .site-footer a {
+      color: var(--accent);
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+    }
+
+    body.dark-mode .site-nav,
+    body.dark-mode .panel,
+    body.dark-mode .note-pill,
+    body.dark-mode .practice-card {
+      background: rgba(33, 26, 44, 0.9);
+    }
+
+    .nav-brand {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a {
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      font-weight: 800;
+      padding: 8px 10px;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 9vw, 5.8rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .tagline {
+      max-width: 680px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .theme-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 126px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding: 9px 12px;
+    }
+
+    .theme-button::before {
+      content: "";
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #ffd76d;
+      box-shadow: 0 0 0 3px rgba(255, 215, 109, 0.2);
+    }
+
+    body.dark-mode .theme-button {
+      background: linear-gradient(135deg, rgba(255, 128, 93, 0.18), rgba(131, 221, 244, 0.16));
+    }
+
+    body.dark-mode .theme-button::before {
+      background: var(--panel);
+      box-shadow:
+        5px -2px 0 #fff0ba,
+        0 0 0 3px rgba(255, 240, 186, 0.16),
+        11px 6px 0 -6px #fff0ba;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .fretboard-panel {
+      overflow: hidden;
+      background:
+        linear-gradient(140deg, rgba(255, 98, 61, 0.08), transparent 34%),
+        linear-gradient(320deg, rgba(79, 195, 223, 0.1), transparent 42%),
+        rgba(255, 255, 255, 0.9);
+    }
+
+    body.dark-mode .fretboard-panel {
+      background:
+        radial-gradient(circle at 18% 14%, rgba(255, 128, 93, 0.18), transparent 32%),
+        radial-gradient(circle at 82% 12%, rgba(131, 221, 244, 0.14), transparent 34%),
+        rgba(33, 26, 44, 0.92);
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    label,
+    .section-title {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+      margin-top: 7px;
+      accent-color: var(--accent);
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+      font-weight: 750;
+      padding: 10px;
+    }
+
+    .scale-notes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .note-pill {
+      min-width: 42px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      font-weight: 900;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .note-pill.active {
+      border-color: var(--ember);
+      background: linear-gradient(135deg, var(--ember-soft), var(--hero-soft));
+      color: var(--text);
+    }
+
+    .fretboard-wrap {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .fretboard {
+      display: grid;
+      grid-template-columns: 58px repeat(13, minmax(54px, 1fr));
+      min-width: 820px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f5d7a4;
+    }
+
+    body.dark-mode .fretboard {
+      background: #3b2741;
+    }
+
+    .string-label,
+    .fret-cell,
+    .fret-number {
+      min-height: 58px;
+      border-right: 1px solid rgba(23, 33, 43, 0.22);
+      border-bottom: 1px solid rgba(23, 33, 43, 0.2);
+    }
+
+    body.dark-mode .string-label,
+    body.dark-mode .fret-cell,
+    body.dark-mode .fret-number {
+      border-color: rgba(255, 248, 239, 0.16);
+    }
+
+    .string-label {
+      display: grid;
+      place-items: center;
+      background: var(--panel-strong);
+      color: var(--text);
+      font-weight: 900;
+    }
+
+    .fret-cell {
+      position: relative;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(90deg, transparent calc(100% - 4px), rgba(255, 255, 255, 0.55) calc(100% - 4px)),
+        rgba(255, 224, 174, 0.7);
+    }
+
+    body.dark-mode .fret-cell {
+      background:
+        linear-gradient(90deg, transparent calc(100% - 4px), rgba(255, 248, 239, 0.16) calc(100% - 4px)),
+        rgba(52, 35, 62, 0.72);
+    }
+
+    .fret-cell::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 3px;
+      transform: translateY(-50%);
+      background: rgba(23, 33, 43, 0.4);
+    }
+
+    body.dark-mode .fret-cell::before {
+      background: rgba(255, 248, 239, 0.32);
+    }
+
+    .fret-number {
+      display: grid;
+      min-height: 34px;
+      place-items: center;
+      background: var(--panel-strong);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .note-dot {
+      position: relative;
+      z-index: 1;
+      display: none;
+      min-width: 34px;
+      height: 34px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 900;
+      place-items: center;
+      box-shadow: 0 8px 16px rgba(23, 33, 43, 0.18);
+    }
+
+    .fret-cell.in-scale .note-dot {
+      display: grid;
+    }
+
+    .fret-cell.root .note-dot {
+      background: var(--ember);
+    }
+
+    .fret-cell.current .note-dot {
+      background: var(--hero);
+      color: var(--text);
+      transform: scale(1.18);
+      box-shadow: 0 0 0 5px rgba(255, 98, 61, 0.25), 0 10px 18px rgba(23, 33, 43, 0.22);
+    }
+
+    .practice-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      padding: 18px;
+    }
+
+    .big-step {
+      margin: 10px 0 4px;
+      font-size: clamp(4rem, 15vw, 7rem);
+      font-weight: 900;
+      line-height: 0.95;
+      text-align: center;
+      color: var(--ember);
+    }
+
+    .step-meta {
+      min-height: 1.4em;
+      margin: 0;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 900;
+      padding: 12px 10px;
+    }
+
+    button.secondary {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    button:hover {
+      filter: brightness(0.96);
+    }
+
+    .tempo {
+      margin-top: 18px;
+    }
+
+    .tempo-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .practice-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pitch-checker {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .checker-readout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .checker-box {
+      min-height: 76px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 10px;
+    }
+
+    .checker-label {
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .checker-value {
+      margin-top: 3px;
+      color: var(--text);
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .checker-status {
+      min-height: 1.4em;
+      margin: 0;
+      color: var(--muted);
+      font-weight: 850;
+    }
+
+    .checker-status.correct {
+      color: var(--accent);
+    }
+
+    .checker-status.miss {
+      color: var(--ember);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .practice-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .practice-item.active {
+      border-color: var(--ember);
+      background: linear-gradient(135deg, var(--ember-soft), var(--hero-soft));
+      color: var(--text);
+    }
+
+    .small-copy {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 900px) {
+      .topbar,
+      .site-nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .control-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="nav-brand" href="index.html">Freetuna</a>
+      <div class="nav-links">
+        <a href="index.html">Tuner</a>
+        <a href="scales.html" aria-current="page">Scales</a>
+      </div>
+    </nav>
+
+    <div class="topbar">
+      <div>
+        <h1>Scale Quest</h1>
+        <p class="tagline">Pick a key, follow the glowing note, and walk the fretboard one spark at a time.</p>
+      </div>
+      <button id="themeButton" class="theme-button" type="button" aria-pressed="false">Night Mode</button>
+    </div>
+
+    <div class="layout">
+      <section class="panel fretboard-panel" aria-label="Scale fretboard">
+        <div class="control-grid">
+          <label for="keySelect">Key
+            <select id="keySelect"></select>
+          </label>
+          <label for="scaleSelect">Scale
+            <select id="scaleSelect"></select>
+          </label>
+          <label for="patternSelect">Practice Path
+            <select id="patternSelect">
+              <option value="up">Up</option>
+              <option value="down">Down</option>
+              <option value="upDown">Up and down</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="scaleNotes" class="scale-notes" aria-label="Notes in selected scale"></div>
+
+        <div class="fretboard-wrap">
+          <div id="fretboard" class="fretboard" aria-label="Guitar fretboard showing selected scale"></div>
+        </div>
+
+        <p class="small-copy">Orange marks the root. Blue marks the current practice note. Start slow, say the note names out loud, then play them clean.</p>
+      </section>
+
+      <aside class="practice-card" aria-label="Follow along practice">
+        <div class="section-title">Follow Along</div>
+        <div id="currentNote" class="big-step">C</div>
+        <p id="currentMeta" class="step-meta">Step 1 of 8</p>
+
+        <div class="button-row">
+          <button id="prevButton" class="secondary" type="button">Prev</button>
+          <button id="playButton" type="button">Play</button>
+          <button id="nextButton" class="secondary" type="button">Next</button>
+        </div>
+
+        <div class="tempo">
+          <div class="tempo-row">
+            <label for="tempoSlider">Tempo</label>
+            <span id="tempoValue">80 BPM</span>
+          </div>
+          <input id="tempoSlider" type="range" min="40" max="160" step="5" value="80">
+        </div>
+
+        <div class="pitch-checker">
+          <button id="listenButton" type="button">Check With Mic</button>
+          <div class="checker-readout">
+            <div class="checker-box">
+              <div class="checker-label">Target</div>
+              <div id="targetNote" class="checker-value">C</div>
+            </div>
+            <div class="checker-box">
+              <div class="checker-label">Heard</div>
+              <div id="heardNote" class="checker-value">--</div>
+            </div>
+          </div>
+          <p id="checkerStatus" class="checker-status">Mic checker is off.</p>
+          <label class="toggle-row" for="autoAdvance">
+            <input id="autoAdvance" type="checkbox" checked>
+            Auto-advance after a clean hit
+          </label>
+        </div>
+
+        <div id="practiceList" class="practice-list" aria-label="Practice sequence"></div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    Built by <a href="https://kiannang.github.io/" target="_blank" rel="noopener noreferrer">Kianna Ng</a>
+  </footer>
+
+  <script>
+    const THEME_STORAGE_KEY = "guitar-tuner-theme";
+    const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const ANALYSER_FFT_SIZE = 8192;
+    const RMS_THRESHOLD = 0.01;
+    const CLARITY_THRESHOLD = 0.2;
+    const MIN_DETECT_FREQ = 50;
+    const MAX_DETECT_FREQ = 1000;
+    const STRINGS = [
+      { label: "e", midi: 64 },
+      { label: "B", midi: 59 },
+      { label: "G", midi: 55 },
+      { label: "D", midi: 50 },
+      { label: "A", midi: 45 },
+      { label: "E", midi: 40 }
+    ];
+    const SCALES = {
+      major: { name: "Major", intervals: [0, 2, 4, 5, 7, 9, 11] },
+      naturalMinor: { name: "Natural Minor", intervals: [0, 2, 3, 5, 7, 8, 10] },
+      majorPentatonic: { name: "Major Pentatonic", intervals: [0, 2, 4, 7, 9] },
+      minorPentatonic: { name: "Minor Pentatonic", intervals: [0, 3, 5, 7, 10] },
+      blues: { name: "Blues", intervals: [0, 3, 5, 6, 7, 10] }
+    };
+
+    let currentStep = 0;
+    let timerId = null;
+    let audioContext = null;
+    let analyser = null;
+    let microphoneSource = null;
+    let microphoneStream = null;
+    let timeDomainBuffer = null;
+    let listenFrameId = null;
+    let isCheckingPitch = false;
+    let correctFrameCount = 0;
+    let canAutoAdvance = true;
+
+    const keySelect = document.getElementById("keySelect");
+    const scaleSelect = document.getElementById("scaleSelect");
+    const patternSelect = document.getElementById("patternSelect");
+    const scaleNotes = document.getElementById("scaleNotes");
+    const fretboard = document.getElementById("fretboard");
+    const currentNote = document.getElementById("currentNote");
+    const currentMeta = document.getElementById("currentMeta");
+    const practiceList = document.getElementById("practiceList");
+    const prevButton = document.getElementById("prevButton");
+    const playButton = document.getElementById("playButton");
+    const nextButton = document.getElementById("nextButton");
+    const tempoSlider = document.getElementById("tempoSlider");
+    const tempoValue = document.getElementById("tempoValue");
+    const themeButton = document.getElementById("themeButton");
+    const listenButton = document.getElementById("listenButton");
+    const targetNote = document.getElementById("targetNote");
+    const heardNote = document.getElementById("heardNote");
+    const checkerStatus = document.getElementById("checkerStatus");
+    const autoAdvance = document.getElementById("autoAdvance");
+
+    function noteNameFromMidi(midi) {
+      return NOTES[((midi % 12) + 12) % 12];
+    }
+
+    function frequencyToNoteName(frequency) {
+      const midi = Math.round(69 + 12 * Math.log2(frequency / 440));
+      return noteNameFromMidi(midi);
+    }
+
+    function setCheckerStatus(message, state) {
+      checkerStatus.textContent = message;
+      checkerStatus.className = "checker-status" + (state ? " " + state : "");
+    }
+
+    function selectedScaleNotes() {
+      const root = Number(keySelect.value);
+      const scale = SCALES[scaleSelect.value];
+      return scale.intervals.map(function (interval) {
+        return NOTES[(root + interval) % 12];
+      });
+    }
+
+    function practiceSequence() {
+      const notes = selectedScaleNotes();
+      const root = notes[0];
+      let sequence = notes.concat(root);
+
+      if (patternSelect.value === "down") {
+        sequence = sequence.slice().reverse();
+      }
+
+      if (patternSelect.value === "upDown") {
+        sequence = notes.concat(root, notes.slice().reverse());
+      }
+
+      return sequence;
+    }
+
+    function populateControls() {
+      NOTES.forEach(function (note, index) {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = note;
+        keySelect.appendChild(option);
+      });
+      keySelect.value = "0";
+
+      Object.keys(SCALES).forEach(function (key) {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = SCALES[key].name;
+        scaleSelect.appendChild(option);
+      });
+      scaleSelect.value = "major";
+    }
+
+    function buildFretboard() {
+      fretboard.innerHTML = '<div class="fret-number"></div>';
+
+      for (let fret = 0; fret <= 12; fret++) {
+        const number = document.createElement("div");
+        number.className = "fret-number";
+        number.textContent = fret;
+        fretboard.appendChild(number);
+      }
+
+      STRINGS.forEach(function (string) {
+        const label = document.createElement("div");
+        label.className = "string-label";
+        label.textContent = string.label;
+        fretboard.appendChild(label);
+
+        for (let fret = 0; fret <= 12; fret++) {
+          const note = noteNameFromMidi(string.midi + fret);
+          const cell = document.createElement("div");
+          cell.className = "fret-cell";
+          cell.dataset.note = note;
+          cell.dataset.fret = String(fret);
+          cell.innerHTML = '<span class="note-dot">' + note + '</span>';
+          fretboard.appendChild(cell);
+        }
+      });
+    }
+
+    function renderScaleNotes(sequence) {
+      const notes = selectedScaleNotes();
+      scaleNotes.innerHTML = "";
+
+      notes.forEach(function (note) {
+        const pill = document.createElement("div");
+        pill.className = "note-pill";
+        if (note === sequence[currentStep]) {
+          pill.classList.add("active");
+        }
+        pill.textContent = note;
+        scaleNotes.appendChild(pill);
+      });
+    }
+
+    function renderPracticeList(sequence) {
+      practiceList.innerHTML = "";
+
+      sequence.forEach(function (note, index) {
+        const item = document.createElement("div");
+        item.className = "practice-item";
+        if (index === currentStep) {
+          item.classList.add("active");
+        }
+        item.innerHTML = '<span>Step ' + (index + 1) + '</span><strong>' + note + '</strong>';
+        item.addEventListener("click", function () {
+          currentStep = index;
+          render();
+        });
+        practiceList.appendChild(item);
+      });
+    }
+
+    function renderFretboard(sequence) {
+      const notes = selectedScaleNotes();
+      const root = notes[0];
+      const active = sequence[currentStep];
+
+      document.querySelectorAll(".fret-cell").forEach(function (cell) {
+        const note = cell.dataset.note;
+        cell.classList.toggle("in-scale", notes.includes(note));
+        cell.classList.toggle("root", note === root && notes.includes(note));
+        cell.classList.toggle("current", note === active && notes.includes(note));
+      });
+    }
+
+    function render() {
+      const sequence = practiceSequence();
+      if (currentStep >= sequence.length) currentStep = 0;
+
+      currentNote.textContent = sequence[currentStep];
+      currentMeta.textContent = "Step " + (currentStep + 1) + " of " + sequence.length;
+      targetNote.textContent = sequence[currentStep];
+      renderScaleNotes(sequence);
+      renderPracticeList(sequence);
+      renderFretboard(sequence);
+    }
+
+    function stepForward() {
+      const sequence = practiceSequence();
+      currentStep = (currentStep + 1) % sequence.length;
+      correctFrameCount = 0;
+      canAutoAdvance = false;
+      window.setTimeout(function () {
+        canAutoAdvance = true;
+      }, 320);
+      render();
+    }
+
+    function stepBackward() {
+      const sequence = practiceSequence();
+      currentStep = (currentStep - 1 + sequence.length) % sequence.length;
+      correctFrameCount = 0;
+      canAutoAdvance = false;
+      window.setTimeout(function () {
+        canAutoAdvance = true;
+      }, 320);
+      render();
+    }
+
+    function stopPractice() {
+      if (timerId !== null) {
+        window.clearInterval(timerId);
+        timerId = null;
+      }
+      playButton.textContent = "Play";
+    }
+
+    function startPractice() {
+      stopPractice();
+      const intervalMs = 60000 / Number(tempoSlider.value);
+      timerId = window.setInterval(stepForward, intervalMs);
+      playButton.textContent = "Pause";
+    }
+
+    function autocorrelate(buffer, sampleRate) {
+      let rms = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        rms += buffer[i] * buffer[i];
+      }
+      rms = Math.sqrt(rms / buffer.length);
+      if (rms < RMS_THRESHOLD) return null;
+
+      const minLag = Math.floor(sampleRate / MAX_DETECT_FREQ);
+      const maxLag = Math.min(Math.ceil(sampleRate / MIN_DETECT_FREQ), buffer.length - 1);
+      let bestLag = -1;
+      let bestCorrelation = 0;
+      const correlations = new Float32Array(maxLag + 1);
+
+      for (let lag = minLag; lag <= maxLag; lag++) {
+        let sum = 0;
+        let leftEnergy = 0;
+        let rightEnergy = 0;
+
+        for (let i = 0; i < buffer.length - lag; i++) {
+          const left = buffer[i];
+          const right = buffer[i + lag];
+          sum += left * right;
+          leftEnergy += left * left;
+          rightEnergy += right * right;
+        }
+
+        const denominator = Math.sqrt(leftEnergy * rightEnergy);
+        const correlation = denominator > 0 ? sum / denominator : 0;
+        correlations[lag] = correlation;
+
+        if (correlation > bestCorrelation) {
+          bestCorrelation = correlation;
+          bestLag = lag;
+        }
+      }
+
+      if (bestLag === -1 || bestCorrelation < CLARITY_THRESHOLD) return null;
+
+      let refinedLag = bestLag;
+      if (bestLag > minLag && bestLag < maxLag) {
+        const left = correlations[bestLag - 1];
+        const center = correlations[bestLag];
+        const right = correlations[bestLag + 1];
+        const denominator = left - 2 * center + right;
+        if (Math.abs(denominator) > 0.000001) {
+          refinedLag = bestLag + (left - right) / (2 * denominator);
+        }
+      }
+
+      const frequency = sampleRate / refinedLag;
+      if (frequency < MIN_DETECT_FREQ || frequency > MAX_DETECT_FREQ) return null;
+      return frequency;
+    }
+
+    function checkPitchLoop() {
+      if (!isCheckingPitch) return;
+
+      analyser.getFloatTimeDomainData(timeDomainBuffer);
+      const frequency = autocorrelate(timeDomainBuffer, audioContext.sampleRate);
+      const sequence = practiceSequence();
+      const target = sequence[currentStep];
+
+      if (frequency === null) {
+        heardNote.textContent = "--";
+        correctFrameCount = 0;
+        setCheckerStatus("Play the target note and let it ring.", "");
+      } else {
+        const heard = frequencyToNoteName(frequency);
+        heardNote.textContent = heard;
+
+        if (heard === target) {
+          correctFrameCount += 1;
+          setCheckerStatus("Clean hit. Keep it steady.", "correct");
+
+          if (autoAdvance.checked && canAutoAdvance && correctFrameCount >= 8) {
+            stepForward();
+          }
+        } else {
+          correctFrameCount = 0;
+          setCheckerStatus("Heard " + heard + ". Aim for " + target + ".", "miss");
+        }
+      }
+
+      listenFrameId = window.requestAnimationFrame(checkPitchLoop);
+    }
+
+    async function startPitchCheck() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setCheckerStatus("This browser does not support microphone access.", "miss");
+        return;
+      }
+
+      try {
+        setCheckerStatus("Requesting microphone access...", "");
+        microphoneStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            channelCount: 1
+          },
+          video: false
+        });
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === "suspended") {
+          await audioContext.resume();
+        }
+
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = ANALYSER_FFT_SIZE;
+        analyser.smoothingTimeConstant = 0;
+        microphoneSource = audioContext.createMediaStreamSource(microphoneStream);
+        microphoneSource.connect(analyser);
+        timeDomainBuffer = new Float32Array(analyser.fftSize);
+        isCheckingPitch = true;
+        correctFrameCount = 0;
+        listenButton.textContent = "Stop Checking";
+        setCheckerStatus("Listening for the target note.", "");
+        checkPitchLoop();
+      } catch (error) {
+        stopPitchCheck();
+        setCheckerStatus("Microphone error: " + (error.message || error.name || String(error)), "miss");
+      }
+    }
+
+    function stopPitchCheck() {
+      isCheckingPitch = false;
+
+      if (listenFrameId !== null) {
+        window.cancelAnimationFrame(listenFrameId);
+        listenFrameId = null;
+      }
+
+      if (microphoneSource) {
+        microphoneSource.disconnect();
+        microphoneSource = null;
+      }
+
+      if (microphoneStream) {
+        microphoneStream.getTracks().forEach(function (track) {
+          track.stop();
+        });
+        microphoneStream = null;
+      }
+
+      if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+      }
+
+      analyser = null;
+      timeDomainBuffer = null;
+      correctFrameCount = 0;
+      heardNote.textContent = "--";
+      listenButton.textContent = "Check With Mic";
+      setCheckerStatus("Mic checker is off.", "");
+    }
+
+    function applyTheme(theme) {
+      const useDarkMode = theme === "dark";
+      document.body.classList.toggle("dark-mode", useDarkMode);
+      themeButton.textContent = useDarkMode ? "Morning Mode" : "Night Mode";
+      themeButton.setAttribute("aria-pressed", String(useDarkMode));
+    }
+
+    keySelect.addEventListener("change", function () {
+      currentStep = 0;
+      correctFrameCount = 0;
+      render();
+    });
+
+    scaleSelect.addEventListener("change", function () {
+      currentStep = 0;
+      correctFrameCount = 0;
+      render();
+    });
+
+    patternSelect.addEventListener("change", function () {
+      currentStep = 0;
+      correctFrameCount = 0;
+      render();
+    });
+
+    prevButton.addEventListener("click", stepBackward);
+    nextButton.addEventListener("click", stepForward);
+
+    playButton.addEventListener("click", function () {
+      if (timerId === null) {
+        startPractice();
+      } else {
+        stopPractice();
+      }
+    });
+
+    listenButton.addEventListener("click", function () {
+      if (isCheckingPitch) {
+        stopPitchCheck();
+      } else {
+        startPitchCheck();
+      }
+    });
+
+    tempoSlider.addEventListener("input", function () {
+      tempoValue.textContent = tempoSlider.value + " BPM";
+      if (timerId !== null) startPractice();
+    });
+
+    themeButton.addEventListener("click", function () {
+      const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+      applyTheme(nextTheme);
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    });
+
+    window.addEventListener("beforeunload", function () {
+      stopPitchCheck();
+    });
+
+    populateControls();
+    buildFretboard();
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "light");
+    render();
+  </script>
+</body>
+</html>
