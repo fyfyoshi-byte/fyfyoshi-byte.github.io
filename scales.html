@@ -43,6 +43,10 @@
       box-sizing: border-box;
     }
 
+    html {
+      scrollbar-gutter: stable;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -58,13 +62,13 @@
     }
 
     main {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1040px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 28px 0 44px;
+      padding: 28px 0 36px;
     }
 
     .site-footer {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1040px, calc(100% - 32px));
       margin: 0 auto;
       padding: 0 0 28px;
       color: var(--muted);
@@ -83,16 +87,28 @@
     }
 
     .dedication-button {
-      margin-left: 6px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--panel);
-      color: var(--accent);
+      margin-left: 4px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
       cursor: pointer;
       font: inherit;
-      font-weight: 900;
-      min-height: 44px;
-      padding: 4px 8px;
+      font-size: 0.84rem;
+      font-weight: 750;
+      min-height: 0;
+      opacity: 0.72;
+      padding: 0 2px;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-underline-offset: 3px;
+    }
+
+    .dedication-button:hover,
+    .dedication-button:focus-visible {
+      color: var(--accent);
+      opacity: 1;
+      outline: none;
+      text-decoration-color: currentColor;
     }
 
     .dedication-modal {
@@ -185,16 +201,15 @@
 
     h1 {
       margin: 0;
-      font-size: clamp(2.5rem, 9vw, 5.8rem);
+      font-size: clamp(2rem, 8vw, 4.6rem);
       line-height: 0.95;
       letter-spacing: 0;
     }
 
     .tagline {
-      max-width: 680px;
-      margin: 10px 0 0;
+      margin: 8px 0 0;
       color: var(--muted);
-      font-size: 1.02rem;
+      font-size: 0.98rem;
     }
 
     .theme-button {
@@ -679,7 +694,7 @@
 
     @media (max-width: 520px) {
       main {
-        width: min(100% - 16px, 1120px);
+        width: min(100% - 16px, 620px);
       }
 
       .fretboard {
@@ -706,7 +721,7 @@
       }
 
       .site-footer {
-        width: min(100% - 16px, 1120px);
+        width: min(100% - 16px, 620px);
       }
     }
   </style>
@@ -724,7 +739,7 @@
     <div class="topbar">
       <div>
         <h1>Scale Quest</h1>
-        <p class="tagline">Pick a key, follow the glowing note, and walk the fretboard one spark at a time.</p>
+        <p class="tagline">Pick a key, follow the glowing note, and walk the fretboard one note at a time.</p>
       </div>
       <button id="themeButton" class="theme-button" type="button" aria-pressed="false">Night Mode</button>
     </div>
@@ -800,7 +815,7 @@
           </label>
           <div class="streak-row">
             <div class="streak-box">
-              <div class="checker-label">Spark Streak</div>
+              <div class="checker-label">Clean Streak</div>
               <div id="streakValue" class="streak-value">0</div>
             </div>
             <div class="streak-box">
@@ -1186,7 +1201,7 @@
       hitStreak += 1;
       bestStreak = Math.max(bestStreak, hitStreak);
       updateStreakDisplay();
-      setCheckerStatus("Spark streak: " + hitStreak + ".", "correct");
+      setCheckerStatus("Clean streak: " + hitStreak + ".", "correct");
       stepForward();
     }
 
@@ -1352,7 +1367,7 @@
 
     populateControls();
     buildFretboard();
-    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "light");
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "dark");
     updateStreakDisplay();
     render();
   </script>
